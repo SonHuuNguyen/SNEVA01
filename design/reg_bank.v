@@ -1,8 +1,7 @@
-
 /////////////////////////////////////////////
 // File name : reg_bank.v
 // Author    : Son Nguyen - nguyensonute@gmail.com
-// Description : Register bank for SNVEVA01 core
+// Description : Register bank for SNEVA01 core
 /////////////////////////////////////////////
 
 module reg_bank (
@@ -50,6 +49,75 @@ module reg_bank (
   reg [31:0] r29;
   reg [31:0] r30;
   reg [31:0] r31;
+
+
+  //outdata
+
+  assign data_o_a = (addr_a == 5'd0)? r0:
+                    (addr_a == 5'd1)? r1:
+                    (addr_a == 5'd2)? r2:
+                    (addr_a == 5'd3)? r3:
+                    (addr_a == 5'd4)? r4:
+                    (addr_a == 5'd5)? r5:
+                    (addr_a == 5'd6)? r6:
+                    (addr_a == 5'd7)? r7:
+                    (addr_a == 5'd8)? r8:
+                    (addr_a == 5'd9)? r9:
+                    (addr_a == 5'd10)? r10:
+                    (addr_a == 5'd11)? r11:
+                    (addr_a == 5'd12)? r12:
+                    (addr_a == 5'd13)? r13:
+                    (addr_a == 5'd14)? r14:
+                    (addr_a == 5'd15)? r15:
+                    (addr_a == 5'd16)? r16:
+                    (addr_a == 5'd17)? r17:
+                    (addr_a == 5'd18)? r18:
+                    (addr_a == 5'd19)? r19:
+                    (addr_a == 5'd20)? r20:
+                    (addr_a == 5'd21)? r21:
+                    (addr_a == 5'd22)? r22:
+                    (addr_a == 5'd23)? r23:
+                    (addr_a == 5'd24)? r24:
+                    (addr_a == 5'd25)? r25:
+                    (addr_a == 5'd26)? r26:
+                    (addr_a == 5'd27)? r27:
+                    (addr_a == 5'd28)? r28:
+                    (addr_a == 5'd29)? r29:
+                    (addr_a == 5'd30)? r30: r31;
+
+  assign data_o_b = (addr_b == 5'd0)? r0:
+                    (addr_b == 5'd1)? r1:
+                    (addr_b == 5'd2)? r2:
+                    (addr_b == 5'd3)? r3:
+                    (addr_b == 5'd4)? r4:
+                    (addr_b == 5'd5)? r5:
+                    (addr_b == 5'd6)? r6:
+                    (addr_b == 5'd7)? r7:
+                    (addr_b == 5'd8)? r8:
+                    (addr_b == 5'd9)? r9:
+                    (addr_b == 5'd10)? r10:
+                    (addr_b == 5'd11)? r11:
+                    (addr_b == 5'd12)? r12:
+                    (addr_b == 5'd13)? r13:
+                    (addr_b == 5'd14)? r14:
+                    (addr_b == 5'd15)? r15:
+                    (addr_b == 5'd16)? r16:
+                    (addr_b == 5'd17)? r17:
+                    (addr_b == 5'd18)? r18:
+                    (addr_b == 5'd19)? r19:
+                    (addr_b == 5'd20)? r20:
+                    (addr_b == 5'd21)? r21:
+                    (addr_b == 5'd22)? r22:
+                    (addr_b == 5'd23)? r23:
+                    (addr_b == 5'd24)? r24:
+                    (addr_b == 5'd25)? r25:
+                    (addr_b == 5'd26)? r26:
+                    (addr_b == 5'd27)? r27:
+                    (addr_b == 5'd28)? r28:
+                    (addr_b == 5'd29)? r29:
+                    (addr_b == 5'd30)? r30: r31;
+
+
 
   //r0 ~
   always@(posedge clk or negedge rstn) begin

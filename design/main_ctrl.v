@@ -50,52 +50,69 @@ parameter ALU_SLT       = 4'b1110;  //|   ALU_Out = 1 if A<B else 0;
 //parameter ALU_       = 4'b1111;  //|   ALU_Out = 1 if A=B else 0;
 
 
+parameter BYTE = 2'b00;
+parameter HALF_WORD = 2'b01;
+parameter WORD = 2'b10;
+
+
 module main_ctrl(
                  input wire [31:0] inst,  //input from instruction mem
-		 output wire imem_sel,    //imem select
+		 output wire imm_sel,    //immediate select
 		 output wire reg_wen,     //register write enable to reg_bank
 		 output wire bsel,        //select of mux before ALU
 		 output wire [3:0] alu_sel, //select for ALU
 		 output wire dmem_rw,     //control dmem read/write
-		 output wire wbsel
+		 output wire wbsel,
+		 output wire usel,        //unsign select for imm gen
+		 output wire [1:0] be          //byte enable
+		 
 
                 );
                 
+  //tmp variable
+  reg imm_sel_tmp;
+  reg reg_wen_tmp;
+  reg bsel_tmp;
+  reg alu_sel_tmp;
+  reg dmem_rw_tmp;
+  reg wbsel_tmp;
+  reg be_tmp;
+  reg usel_tmp;
 
   always @(*) begin
     case(inst[6:0]) begin //opcode
       OPCODE_G1: begin
         if(inst[14:12] == ADD_SUB_3BIT && !inst[30]) begin
-	  alu_sel = ALU_ADD; //alu add
+	  alu_sel_tmp = ALU_ADD; //alu add
 	end
         else if(inst[14:12] == ADD_SUB_3BIT && inst[30]) begin
-	  alu_sel = ALU_SUB; //alu sub
+	  alu_sel_tmp = ALU_SUB; //alu sub
 	end
         else if(inst[14:12] == SLL_3BIT) begin
-	  alu_sel = ALU_SLL; //alu sll
+	  alu_sel_tmp = ALU_SLL; //alu sll
 	end
         else if(inst[14:12] == SLT_3BIT) begin
-	  alu_sel = ALU_SLT; //alu slt
+	  alu_sel_tmp = ALU_SLT; //alu slt
 	end
         else if(inst[14:12] == SLTU_3BIT) begin
-	  alu_sel = ALU_SLT; //???? need to check again
+	  alu_sel_tmp = ALU_SLT; //???? need to check again
 	end
         else if(inst[14:12] == XOR_3BIT) begin
-	  alu_sel = ALU_XOR;
+	  alu_sel_tmp = ALU_XOR;
 	end
         else if(inst[14:12] == SRL_SRA_3BIT && !inst[30]) begin //SRL
-	  alu_sel = ALU_SRL; 
+	  alu_sel_tmp = ALU_SRL; 
 	end
         else if(inst[14:12] == SRL_SRA_3BIT && inst[30]) begin //SRLA
-	  alu_sel = ALU_SRL;  //???? need to check again
+	  alu_sel_tmp = ALU_SRL;  //???? need to check again
 	end
         else if(inst[14:12] == OR_3BIT) begin
-	  alu_sel = ALU_OR;
+	  alu_sel_tmp = ALU_OR;
 	end
         else if(inst[14:12] == AND_3BIT) begin
-	  alu_sel = ALU_AND;
+	  alu_sel_tmp = ALU_AND;
 	end
-	reg_wen = 0; //write enable
+	reg_wen_tmp = 0; //write enable
       end
 
       OPCODE_G2: begin
@@ -103,6 +120,26 @@ module main_ctrl(
       OPCODE_G3: begin
       end
       OPCODE_G4: begin
+        if(inst[14:12] == {1'b0, BYTE} || inst[14:12] == {1'b0, HALF_WORD} || inst[14:12] == {1'b0, WORD}) begin //LB/LH/LW
+	  imm_sel_tmp = 1;
+	  reg_wen_tmp = 1;
+	  bsel_tmp = 1;
+	  dmem_rw_tmp = 1;
+	  wbsel_tmp = 0;
+	  be_tmp = inst[14:12];
+	  usel_tmp = 1'b0; //unsigned deselect
+	  alu_sel_tmp = ALU_ADD; 
+	end
+        else if(inst[14:12] == {1'b1, BYTE} || inst[14:12] == {1'b1, HALF_WORD} ) begin //LBU/LHU
+	  imm_sel_tmp = 1;
+	  reg_wen_tmp = 1;
+	  bsel_tmp = 1;
+	  dmem_rw_tmp = 1;
+	  wbsel_tmp = 0;
+	  be_tmp = inst[14:12];
+	  usel_tmp = 1'b1; //unsigned select
+	  alu_sel_tmp = ALU_ADD; 
+	end
       end
       OPCODE_G5: begin
       end

@@ -6,9 +6,11 @@
 
 module imm_gen(
               input wire [11:0] inst_in,
-	      input wire        usel,
+	      input wire        imm_sel,
 	      output wire [31:0] imm_out
               );
 
-   assign imm_out = {(usel == 1'b1)? 21'b0 : 21{inst_in[11]}, inst_in[10:0]};
+   `include "params_def.v"
+   assign imm_out = { 21{inst_in[11]}, inst_in[30:25], (imm_sel == IMM_I) ? inst_in[24:20] : inst_in[11:7]};
+
 endmodule
